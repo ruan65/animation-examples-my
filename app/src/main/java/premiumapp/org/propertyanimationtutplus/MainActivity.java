@@ -27,6 +27,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         ImageView wheel = (ImageView) findViewById(R.id.wheel);
         ImageView sun = (ImageView) findViewById(R.id.sun);
+        ImageView cloud1 = (ImageView) findViewById(R.id.cloud1);
+        ImageView cloud2 = (ImageView) findViewById(R.id.cloud2);
 
         Animator wheelSet = AnimatorInflater.loadAnimator(this, R.animator.wheel_spin);
         Animator sunSet = AnimatorInflater.loadAnimator(this, R.animator.sun_swing);
@@ -43,6 +45,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         wheel.setOnClickListener(this);
         sun.setOnClickListener(this);
+        cloud1.setOnClickListener(this);
+        cloud2.setOnClickListener(this);
     }
 
     private ValueAnimator animateSky(View v, int duration) {
@@ -78,6 +82,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 break;
             case R.id.sun:
                 startActivity(new Intent(MainActivity.this, DragAndDropActivity.class));
+                break;
+            case R.id.cloud2:
+                startActivity(new Intent(MainActivity.this, ExperimentActivity.class));
+                break;
+            case R.id.cloud1:
+//                startActivity(new Intent(MainActivity.this, DragAndDropActivity.class));
                 break;
         }
     }

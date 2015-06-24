@@ -2,6 +2,7 @@ package premiumapp.org.propertyanimationtutplus;
 
 import android.content.ClipData;
 import android.graphics.Typeface;
+import android.graphics.drawable.shapes.OvalShape;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -37,6 +38,8 @@ public class DragAndDropActivity extends AppCompatActivity {
         choice1.setOnDragListener(new ChoiceDragListener());
         choice2.setOnDragListener(new ChoiceDragListener());
         choice3.setOnDragListener(new ChoiceDragListener());
+
+        OvalShape ovalShape = new OvalShape();
     }
 
     private final class ChoiceTouchListener implements View.OnTouchListener {

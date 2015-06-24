@@ -20,6 +20,7 @@
     <string name="choice_1">Most favorite</string>
     <string name="choice_2">-</string>
     <string name="choice_3">Least favorite</string>
+    <string name="title_activity_experiment">ExperimentActivity</string>
 
 
 </resources>
