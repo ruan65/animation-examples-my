@@ -7,28 +7,25 @@
     tools:context=".TimerActivity">
 
     <TextView
-        android:id="@+id/tv1"
+        android:id="@+id/v0"
         android:layout_width="match_parent"
         android:background="#900"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/tv2"
+        android:id="@+id/v1"
         android:layout_width="match_parent"
         android:background="#090"
-        android:layout_below="@+id/tv1"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/tv3"
+        android:id="@+id/v2"
         android:layout_width="match_parent"
-        android:layout_below="@+id/tv2"
         android:background="#009"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/tv4"
-        android:layout_below="@id/tv3"
+        android:id="@+id/v3"
         android:layout_width="match_parent"
         android:background="#909"
         android:layout_height="wrap_content" />
