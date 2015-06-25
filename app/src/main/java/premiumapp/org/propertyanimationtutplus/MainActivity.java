@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +19,7 @@ import android.widget.ImageView;
 import android.widget.ViewAnimator;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +28,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         ImageView wheel = (ImageView) findViewById(R.id.wheel);
         ImageView sun = (ImageView) findViewById(R.id.sun);
-        ImageView cloud1 = (ImageView) findViewById(R.id.cloud1);
-        ImageView cloud2 = (ImageView) findViewById(R.id.cloud2);
 
         Animator wheelSet = AnimatorInflater.loadAnimator(this, R.animator.wheel_spin);
         Animator sunSet = AnimatorInflater.loadAnimator(this, R.animator.sun_swing);
@@ -42,11 +41,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         animateSky(findViewById(R.id.car_layout), 3000).start();
         animateCloud(findViewById(R.id.cloud1), 3000, -360).start();
         animateCloud(findViewById(R.id.cloud2), 3000, -330).start();
-
-        wheel.setOnClickListener(this);
-        sun.setOnClickListener(this);
-        cloud1.setOnClickListener(this);
-        cloud2.setOnClickListener(this);
     }
 
     private ValueAnimator animateSky(View v, int duration) {
@@ -74,21 +68,31 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     @Override
-    public void onClick(View v) {
+    public boolean onCreateOptionsMenu(Menu menu) {
 
-        switch (v.getId()) {
-            case R.id.wheel:
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.timer:
                 startActivity(new Intent(MainActivity.this, TimerActivity.class));
                 break;
-            case R.id.sun:
+            case R.id.drag_and_drop:
                 startActivity(new Intent(MainActivity.this, DragAndDropActivity.class));
                 break;
-            case R.id.cloud2:
+            case R.id.experiment:
                 startActivity(new Intent(MainActivity.this, ExperimentActivity.class));
                 break;
-            case R.id.cloud1:
-//                startActivity(new Intent(MainActivity.this, DragAndDropActivity.class));
+            case R.id.some:
+                startActivity(new Intent(MainActivity.this, SomeActivity.class));
                 break;
         }
+        return true;
     }
+
 }

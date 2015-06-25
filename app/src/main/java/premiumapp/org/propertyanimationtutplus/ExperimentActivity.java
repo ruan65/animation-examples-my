@@ -5,12 +5,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.view.View;
-import android.widget.ImageView;
+import android.support.v7.app.AppCompatActivity;
 
 
-public class ExperimentActivity extends ActionBarActivity {
+public class ExperimentActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

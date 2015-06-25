@@ -1,6 +1,28 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+    <item
+        android:id="@+id/experiment"
+        android:orderInCategory="100"
+        android:title="Experiment"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/timer"
+        android:orderInCategory="90"
+        android:title="Timer"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/drag_and_drop"
+        android:orderInCategory="80"
+        android:title="Drag and Drop"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/some"
+        android:orderInCategory="70"
+        android:title="Some"
+        app:showAsAction="never" />
 </menu>
