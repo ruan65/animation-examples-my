@@ -3,17 +3,20 @@ package premiumapp.org.propertyanimationtutplus;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.view.ViewTreeObserver;
+import android.view.animation.OvershootInterpolator;
 import android.widget.RelativeLayout;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-
 public class TimerActivity extends AppCompatActivity implements View.OnTouchListener {
+
+    private static final float sOvershoot = 2f;
 
     @InjectView(R.id.v0)
     View v0;
@@ -23,13 +26,14 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
     View v2;
     @InjectView(R.id.v3)
     View v3;
-    @InjectView(R.id.containerRL) RelativeLayout mFrame;
+    @InjectView(R.id.containerRL)
+    RelativeLayout mFrame;
 
     View mOpenedView;
 
     int v1h, v2h, v3h, v1l, v2l, v3l; // highest and lowest positions of all movable views
 
-    double delta;
+    double delta, yBefore; // these are used in the MotionEvent switch
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +69,9 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
                 v2h = v2l - maxH * 2 / 3;
                 v3h = v3l - maxH * 2 / 3;
 
+                Log.d("ml", "max height" + maxH);
+
+
                 initViewHeightAndMargin(v0, maxH, 0);
                 initViewHeightAndMargin(v1, maxH, v1l);
                 initViewHeightAndMargin(v2, maxH, v2l);
@@ -86,28 +93,33 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
 
             case MotionEvent.ACTION_DOWN:
 
-                int position = lp.topMargin;
-
-                double y = event.getRawY();
-
-                delta = y - position;
-
-                return true;
+                delta = event.getRawY() - lp.topMargin;
+                yBefore = event.getRawY();
+                break;
 
             case MotionEvent.ACTION_MOVE:
 
-                return handleMoveMotionEvent(touchView, event, lp);
+                handleMoveMotionEvent(touchView, event, lp);
+                break;
 
             case MotionEvent.ACTION_UP:
 
                 int id = touchView.getId();
+                int finalPosition;
 
-                int finalPosition = (id == R.id.v1) ? v1h : (id == R.id.v2) ? v2h : v3h;
+                float yNow = event.getRawY();
 
+                if (yBefore > yNow) {
+                    finalPosition = (id == R.id.v1) ? v1h : (id == R.id.v2) ? v2h : v3h;
+                } else {
+                    finalPosition = (id == R.id.v1) ? v1l : (id == R.id.v2) ? v2l : v3l;
+                }
                 createMarginAnimator(touchView, finalPosition, 500).start();
+                break;
+            default:
+                return false;
         }
-
-        return false;
+        return true;
     }
 
     private boolean handleMoveMotionEvent(View view, MotionEvent event, MarginLayoutParams lp) {
@@ -149,7 +161,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
 
         MarginLayoutParams lp = getMarginLayoutParams(v);
 
-        lp.height = height;
+        lp.height = (int) (height * (1f + sOvershoot * .1f));
         lp.topMargin = marginTop;
         v.setLayoutParams(lp);
     }
@@ -169,7 +181,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
 
     private boolean adjustTopMargin(MarginLayoutParams lp, int high, int low) {
 
-        lp.topMargin = lp.topMargin < high 
+        lp.topMargin = lp.topMargin < high
                 ? lp.topMargin = high
                 : lp.topMargin > low ? low : lp.topMargin;
         return true;
@@ -193,6 +205,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
 
         animator.setDuration(duration);
 
+        animator.setInterpolator(new OvershootInterpolator(sOvershoot));
         return animator;
     }
 }
