@@ -1,5 +1,6 @@
 package premiumapp.org.propertyanimationtutplus;
 
+import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
@@ -24,8 +25,6 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
     View v3;
     @InjectView(R.id.containerRL) RelativeLayout mFrame;
 
-    View mCurrentTouchedView = null;
-
     View mOpenedView;
 
     int v1h, v2h, v3h, v1l, v2l, v3l; // highest and lowest positions of all movable views
@@ -39,7 +38,6 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
 
         ButterKnife.inject(this);
 
-        v0.setOnTouchListener(this);
         v1.setOnTouchListener(this);
         v2.setOnTouchListener(this);
         v3.setOnTouchListener(this);
@@ -78,13 +76,11 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
     }
 
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
+    public boolean onTouch(View touchView, MotionEvent event) {
 
-        if (v == mOpenedView) return false;
+        if (touchView == mOpenedView) return false;
 
-        mCurrentTouchedView = v;
-
-        MarginLayoutParams lp = getMarginLayoutParams(mCurrentTouchedView);
+        MarginLayoutParams lp = getMarginLayoutParams(touchView);
 
         switch (event.getAction()) {
 
@@ -100,40 +96,53 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
 
             case MotionEvent.ACTION_MOVE:
 
-                double value = event.getRawY() - delta;
+                return handleMoveMotionEvent(touchView, event, lp);
 
-                switch (mCurrentTouchedView.getId()) {
+            case MotionEvent.ACTION_UP:
 
-                    case R.id.v1:
+                int id = touchView.getId();
 
-                        if (lp.topMargin >= v1h && lp.topMargin <= v1l) {
+                int finalPosition = (id == R.id.v1) ? v1h : (id == R.id.v2) ? v2h : v3h;
 
-                            setMarginTop(mCurrentTouchedView, (int) value);
-                        }
-                        return adjustTopMargin(lp, v1h, v1l);
-
-                    case R.id.v2:
-
-                        if (lp.topMargin >= v2h && lp.topMargin <= v2l) {
-
-                            setMarginTop(mCurrentTouchedView, (int) value);
-                        }
-                        return adjustTopMargin(lp, v2h, v2l);
-
-                    case R.id.v3:
-
-                        if (lp.topMargin >= v3h && lp.topMargin <= v3l) {
-
-                            setMarginTop(mCurrentTouchedView, (int) value);
-                        }
-                        return adjustTopMargin(lp, v3h, v3l);
-
-                    default:
-                        return true;
-                }
+                createMarginAnimator(touchView, finalPosition, 500).start();
         }
 
-        return true;
+        return false;
+    }
+
+    private boolean handleMoveMotionEvent(View view, MotionEvent event, MarginLayoutParams lp) {
+
+        double value = event.getRawY() - delta;
+
+        switch (view.getId()) {
+
+            case R.id.v1:
+
+                if (lp.topMargin >= v1h && lp.topMargin <= v1l) {
+
+                    setMarginTop(view, (int) value);
+                }
+                return adjustTopMargin(lp, v1h, v1l);
+
+            case R.id.v2:
+
+                if (lp.topMargin >= v2h && lp.topMargin <= v2l) {
+
+                    setMarginTop(view, (int) value);
+                }
+                return adjustTopMargin(lp, v2h, v2l);
+
+            case R.id.v3:
+
+                if (lp.topMargin >= v3h && lp.topMargin <= v3l) {
+
+                    setMarginTop(view, (int) value);
+                }
+                return adjustTopMargin(lp, v3h, v3l);
+
+            default:
+                return true;
+        }
     }
 
     private void initViewHeightAndMargin(View v, int height, int marginTop) {
@@ -158,8 +167,32 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
         return (MarginLayoutParams) v.getLayoutParams();
     }
 
-    private boolean adjustTopMargin(MarginLayoutParams lp, int h, int l) {
-        lp.topMargin = lp.topMargin < h ? lp.topMargin = h : lp.topMargin > l ? l : lp.topMargin;
+    private boolean adjustTopMargin(MarginLayoutParams lp, int high, int low) {
+
+        lp.topMargin = lp.topMargin < high 
+                ? lp.topMargin = high
+                : lp.topMargin > low ? low : lp.topMargin;
         return true;
+    }
+
+    private ValueAnimator createMarginAnimator(final View view, int endValue, int duration) {
+
+        final MarginLayoutParams lp = getMarginLayoutParams(view);
+
+        ValueAnimator animator = ValueAnimator.ofInt(lp.topMargin, endValue);
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+
+                lp.topMargin = (int) animation.getAnimatedValue();
+                view.requestLayout();
+            }
+        });
+
+        animator.setDuration(duration);
+
+        return animator;
     }
 }
