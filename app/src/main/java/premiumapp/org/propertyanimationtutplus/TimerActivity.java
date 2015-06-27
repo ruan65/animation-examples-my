@@ -6,17 +6,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.view.ViewTreeObserver;
 import android.view.animation.OvershootInterpolator;
 import android.widget.RelativeLayout;
+
+import java.security.acl.Group;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class TimerActivity extends AppCompatActivity implements View.OnTouchListener {
 
-    private static final float sOvershoot = 2f;
+    public static final float sOvershoot = 1.2f;
+    public static final int ANIM_DURATION = 600;
 
     @InjectView(R.id.v0)
     View v0;
@@ -30,11 +34,11 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
     RelativeLayout mFrame;
 
     int v1h, v2h, v3h, v1l, v2l, v3l; // highest and lowest positions of all movable views
+    int minH;
 
     double delta, yBefore; // these are used in the MotionEvent switch
 
     boolean isUpV1, isUpV2, isUpV3;
-    public static final int ANIM_DURATION = 500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +66,16 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
 
                 int maxH = heightPixelsDp / 2;
 
-                v1l = maxH;
-                v2l = maxH + maxH / 3;
-                v3l = maxH + maxH * 2 / 3;
+                minH = maxH / 3;
 
-                v1h = v1l - maxH * 2 / 3;
-                v2h = v2l - maxH * 2 / 3;
-                v3h = v3l - maxH * 2 / 3;
+
+                v1l = maxH;
+                v2l = maxH + minH;
+                v3l = maxH + minH * 2;
+
+                v1h = v1l - minH * 2;
+                v2h = v2l - minH * 2;
+                v3h = v3l - minH * 2;
 
                 initViewHeightAndMargin(v0, maxH, 0);
                 initViewHeightAndMargin(v1, maxH, v1l);
@@ -111,7 +118,6 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
 
                     handleDownMovement(touchView, id);
                 }
-                Log.d("ml", isUpV1 + " " + isUpV2 + " " + isUpV3);
                 break;
             default:
                 return false;
