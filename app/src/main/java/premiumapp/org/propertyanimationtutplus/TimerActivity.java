@@ -29,11 +29,11 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
     @InjectView(R.id.containerRL)
     RelativeLayout mFrame;
 
-    View mOpenedView;
-
     int v1h, v2h, v3h, v1l, v2l, v3l; // highest and lowest positions of all movable views
 
     double delta, yBefore; // these are used in the MotionEvent switch
+
+    boolean isUpV1, isUpV2, isUpV3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,15 +69,11 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
                 v2h = v2l - maxH * 2 / 3;
                 v3h = v3l - maxH * 2 / 3;
 
-                Log.d("ml", "max height" + maxH);
-
-
                 initViewHeightAndMargin(v0, maxH, 0);
                 initViewHeightAndMargin(v1, maxH, v1l);
                 initViewHeightAndMargin(v2, maxH, v2l);
                 initViewHeightAndMargin(v3, maxH, v3l);
 
-                mOpenedView = v0;
             }
         });
     }
@@ -85,7 +81,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
     @Override
     public boolean onTouch(View touchView, MotionEvent event) {
 
-        if (touchView == mOpenedView) return false;
+        if (touchView.getId() == R.id.v0) return false;
 
         MarginLayoutParams lp = getMarginLayoutParams(touchView);
 
@@ -105,21 +101,64 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
             case MotionEvent.ACTION_UP:
 
                 int id = touchView.getId();
-                int finalPosition;
 
                 float yNow = event.getRawY();
 
                 if (yBefore > yNow) {
-                    finalPosition = (id == R.id.v1) ? v1h : (id == R.id.v2) ? v2h : v3h;
+
+                    handleUpMovement(touchView, id);
                 } else {
-                    finalPosition = (id == R.id.v1) ? v1l : (id == R.id.v2) ? v2l : v3l;
+
+                    handleDownMovement(touchView, id);
                 }
-                createMarginAnimator(touchView, finalPosition, 500).start();
                 break;
             default:
                 return false;
         }
         return true;
+    }
+
+    private void handleDownMovement(View v, int id) {
+
+        int finalPosition;
+
+        switch (id) {
+            case R.id.v1:
+                finalPosition = v1l;
+                isUpV1 = false;
+                break;
+            case R.id.v2:
+                finalPosition = v2l;
+                isUpV2 = false;
+                break;
+            default:
+                finalPosition = v3l;
+                isUpV3 = false;
+                break;
+        }
+        createMarginAnimator(v, finalPosition, 500).start();
+
+    }
+
+    private void handleUpMovement(View v, int id) {
+
+        int finalPosition;
+
+        switch (id) {
+            case R.id.v1:
+                finalPosition = v1h;
+                isUpV1 = true;
+                break;
+            case R.id.v2:
+                finalPosition = v2h;
+                isUpV2 = true;
+                break;
+            default:
+                finalPosition = v3h;
+                isUpV3 = true;
+                break;
+        }
+        createMarginAnimator(v, finalPosition, 500).start();
     }
 
     private boolean handleMoveMotionEvent(View view, MotionEvent event, MarginLayoutParams lp) {
