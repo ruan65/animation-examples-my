@@ -3,24 +3,21 @@ package premiumapp.org.propertyanimationtutplus;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.view.ViewTreeObserver;
+import android.view.animation.BounceInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.RelativeLayout;
-
-import java.security.acl.Group;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class TimerActivity extends AppCompatActivity implements View.OnTouchListener {
 
-    public static final float sOvershoot = 1.2f;
-    public static final int ANIM_DURATION = 600;
+    public static final float sOvershoot = 1f;
+    public static final int ANIM_DURATION = 650;
 
     @InjectView(R.id.v0)
     View v0;
@@ -33,7 +30,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
     @InjectView(R.id.containerRL)
     RelativeLayout mFrame;
 
-    int v1h, v2h, v3h, v1l, v2l, v3l; // highest and lowest positions of all movable views
+    int v0h, v1h, v2h, v3h, v0l, v1l, v2l, v3l; // highest and lowest positions of all movable views
     int minH;
 
     double delta, yBefore; // these are used in the MotionEvent switch
@@ -47,6 +44,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
 
         ButterKnife.inject(this);
 
+        v0.setOnTouchListener(this);
         v1.setOnTouchListener(this);
         v2.setOnTouchListener(this);
         v3.setOnTouchListener(this);
@@ -63,12 +61,10 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
                 mFrame.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
                 int heightPixelsDp = mFrame.getHeight();
-
                 int maxH = heightPixelsDp / 2;
-
                 minH = maxH / 3;
 
-
+                v0l = minH;
                 v1l = maxH;
                 v2l = maxH + minH;
                 v3l = maxH + minH * 2;
@@ -77,7 +73,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
                 v2h = v2l - minH * 2;
                 v3h = v3l - minH * 2;
 
-                initViewHeightAndMargin(v0, maxH, 0);
+                initViewHeightAndMargin(v0, maxH, v0h);
                 initViewHeightAndMargin(v1, maxH, v1l);
                 initViewHeightAndMargin(v2, maxH, v2l);
                 initViewHeightAndMargin(v3, maxH, v3l);
@@ -88,11 +84,9 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
     @Override
     public boolean onTouch(View touchView, MotionEvent event) {
 
-        if (touchView.getId() == R.id.v0) return false;
-
         MarginLayoutParams lp = getMarginLayoutParams(touchView);
 
-        switch (event.getAction()) {
+        switch (event.getActionMasked()) {
 
             case MotionEvent.ACTION_DOWN:
 
@@ -102,21 +96,22 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
 
             case MotionEvent.ACTION_MOVE:
 
+                if (touchView.getId() == R.id.v0 && yBefore + 10 < event.getRawY()) {
+                    handleDownFling(touchView, touchView.getId());
+                }
                 handleMoveMotionEvent(touchView, event, lp);
                 break;
 
             case MotionEvent.ACTION_UP:
 
-                int id = touchView.getId();
-
                 float yNow = event.getRawY();
 
-                if (yBefore > yNow) {
+                if (yBefore > yNow  || touchView.getId() == R.id.v0) {
 
-                    handleUpMovement(touchView, id);
+                    handleUpFling(touchView, touchView.getId());
                 } else {
 
-                    handleDownMovement(touchView, id);
+                    handleDownFling(touchView, touchView.getId());
                 }
                 break;
             default:
@@ -125,15 +120,25 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
         return true;
     }
 
-    private void handleUpMovement(View v, int id) {
+    private void handleUpFling(View v, int id) {
 
         int finalPosition;
 
         switch (id) {
+
+            case R.id.v0:
+                finalPosition = v0h;
+
+                ValueAnimator marginAnimator = createMarginAnimator(v, finalPosition, 900);
+                marginAnimator.setInterpolator(new BounceInterpolator());
+                marginAnimator.start();
+                return;
+
             case R.id.v1:
                 finalPosition = v1h;
                 isUpV1 = true;
                 break;
+
             case R.id.v2:
                 finalPosition = v2h;
                 if (!isUpV1) {
@@ -142,6 +147,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
                 }
                 isUpV2 = true;
                 break;
+
             default:
                 finalPosition = v3h;
                 if (!isUpV1) {
@@ -158,11 +164,28 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
         createMarginAnimator(v, finalPosition, ANIM_DURATION).start();
     }
 
-    private void handleDownMovement(View v, int id) {
+    private void handleDownFling(View v, int id) {
 
         int finalPosition;
 
         switch (id) {
+
+            case R.id.v0:
+
+                if (isUpV1) {
+                    createMarginAnimator(v1, v1l, ANIM_DURATION).start();
+                    isUpV1 = false;
+                }
+                if (isUpV2) {
+                    createMarginAnimator(v2, v2l, ANIM_DURATION).start();
+                    isUpV2 = false;
+                }
+                if (isUpV3) {
+                    createMarginAnimator(v3, v3l, ANIM_DURATION).start();
+                    isUpV3 = false;
+                }
+                return;
+
             case R.id.v1:
                 finalPosition = v1l;
                 if (isUpV2) {
@@ -175,6 +198,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
                 }
                 isUpV1 = false;
                 break;
+
             case R.id.v2:
                 finalPosition = v2l;
                 if (isUpV3) {
@@ -183,13 +207,13 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
                 }
                 isUpV2 = false;
                 break;
+
             default:
                 finalPosition = v3l;
                 isUpV3 = false;
                 break;
         }
         createMarginAnimator(v, finalPosition, ANIM_DURATION).start();
-
     }
 
     private boolean handleMoveMotionEvent(View view, MotionEvent event, MarginLayoutParams lp) {
@@ -197,6 +221,13 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
         double value = event.getRawY() - delta;
 
         switch (view.getId()) {
+
+            case R.id.v0:
+                if (lp.topMargin >= v0h && lp.topMargin <= v0l) {
+
+                    setMarginTop(view, (int) value);
+                }
+                return adjustTopMargin(lp, v0h, v0l);
 
             case R.id.v1:
 
@@ -211,6 +242,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
                 if (lp.topMargin >= v2h && lp.topMargin <= v2l) {
 
                     setMarginTop(view, (int) value);
+
                 }
                 return adjustTopMargin(lp, v2h, v2l);
 
