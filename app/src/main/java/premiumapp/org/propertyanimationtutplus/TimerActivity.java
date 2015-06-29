@@ -64,7 +64,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
                 int maxH = heightPixelsDp / 2;
                 minH = maxH / 3;
 
-                v0l = minH;
+                v0l = minH / 2;
                 v1l = maxH;
                 v2l = maxH + minH;
                 v3l = maxH + minH * 2;

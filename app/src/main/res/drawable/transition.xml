@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transition xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/shape1" />
+    <item android:drawable="@drawable/steering_wheel" />
+    <item android:drawable="@drawable/shape1" />
+    <item android:drawable="@drawable/steering_wheel" />
+
+
+
+</transition>

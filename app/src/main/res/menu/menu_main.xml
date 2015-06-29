@@ -25,4 +25,16 @@
         android:orderInCategory="70"
         android:title="Some"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/compass"
+        android:orderInCategory="60"
+        android:title="Compass"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/camera"
+        android:orderInCategory="50"
+        android:title="Camera"
+        app:showAsAction="never" />
 </menu>

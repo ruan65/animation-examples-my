@@ -5,6 +5,7 @@ import android.animation.AnimatorInflater;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -91,6 +92,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.some:
                 startActivity(new Intent(MainActivity.this, SomeActivity.class));
                 break;
+            case R.id.compass:
+                startActivity(new Intent(MainActivity.this, CompassActivity.class));
+
+            case R.id.camera:
+                startActivity(new Intent(MainActivity.this, CameraActivity.class));
         }
         return true;
     }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="morning">#d99270</color>
+    <color name="day">#b76f55</color>
+    <color name="evening">#734825</color>
+    <color name="night">#693b2b</color>
+    <color name="background">#eccd80</color>
+
+    <color name="primary">#795548</color>
+    <color name="primary_dark">#5D4037</color>
+</resources>

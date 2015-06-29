@@ -1,5 +1,6 @@
 package premiumapp.org.propertyanimationtutplus;
 
+import android.graphics.drawable.TransitionDrawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -18,7 +19,12 @@ public class SomeActivity extends ActionBarActivity implements View.OnTouchListe
     @InjectView(R.id.imageView2)
     ImageView wheel2;
 
+    @InjectView(R.id.toggle_image)
+    ImageView trView;
+
     float dX, dY;
+
+    TransitionDrawable transitionDrawable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +33,10 @@ public class SomeActivity extends ActionBarActivity implements View.OnTouchListe
 
         ButterKnife.inject(this);
 
+        transitionDrawable = (TransitionDrawable) getResources().getDrawable(R.drawable.transition);
         wheel.setOnTouchListener(this);
         wheel2.setOnTouchListener(this);
+        trView.setImageDrawable(transitionDrawable);
     }
 
     @Override
@@ -46,9 +54,13 @@ public class SomeActivity extends ActionBarActivity implements View.OnTouchListe
                 view.animate()
                         .x(event.getRawX() + dX)
                         .y(event.getRawY() + dY)
+                        .alpha(.5f)
                         .setDuration(0)
                         .start();
                 break;
+
+            case MotionEvent.ACTION_UP:
+            break;
             default:
                 return false;
         }
@@ -58,6 +70,11 @@ public class SomeActivity extends ActionBarActivity implements View.OnTouchListe
     public void recreate(View view) {
 
         recreate();
+    }
+
+    public void trClick(View view) {
+
+        transitionDrawable.startTransition(5000);
     }
 }
 
