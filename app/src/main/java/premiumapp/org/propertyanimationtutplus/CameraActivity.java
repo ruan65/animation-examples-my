@@ -1,12 +1,12 @@
 package premiumapp.org.propertyanimationtutplus;
 
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.RectF;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Surface;
@@ -27,7 +27,6 @@ public class CameraActivity extends AppCompatActivity {
     private Camera mCamera;
 
     final static int CAMERA_ID = 0;
-    final static boolean FULL_SCREEN = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +53,7 @@ public class CameraActivity extends AppCompatActivity {
         super.onResume();
 
         mCamera = Camera.open(CAMERA_ID);
-        definePreview(FULL_SCREEN);
+        definePreview();
     }
 
     @Override
@@ -79,40 +78,34 @@ public class CameraActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
-
     }
 
+    private void definePreview() {
 
+        Point displaySize = new Point();
 
-    private void definePreview(boolean fullScreenMode) {
+        getWindowManager().getDefaultDisplay().getSize(displaySize);
 
-        Display display = getWindowManager().getDefaultDisplay();
+        boolean landscapeMode = displaySize.x > displaySize.y;
 
-        boolean landscapeMode = display.getWidth() > display.getHeight();
-
-        Size size = mCamera.getParameters().getPreviewSize();
+        Size cameraSize = mCamera.getParameters().getPreviewSize();
 
         RectF rDisplay = new RectF();
         RectF rPreview = new RectF();
 
-        rDisplay.set(0, 0, display.getWidth(), display.getHeight());
+        rDisplay.set(0, 0, displaySize.x, displaySize.y);
 
         if (landscapeMode) {
 
-            rPreview.set(0, 0, size.width, size.height);
+            rPreview.set(0, 0, cameraSize.width, cameraSize.height);
         } else {
-            rPreview.set(0, 0, size.height, size.width);
+            rPreview.set(0, 0, cameraSize.height, cameraSize.width);
         }
 
         Matrix matrix = new Matrix();
 
-        if (!fullScreenMode) {
-            matrix.setRectToRect(rPreview, rDisplay, Matrix.ScaleToFit.START);
-        } else {
-            matrix.setRectToRect(rDisplay, rPreview, Matrix.ScaleToFit.START);
-            matrix.invert(matrix);
-        }
-
+        matrix.setRectToRect(rDisplay, rPreview, Matrix.ScaleToFit.START);
+        matrix.invert(matrix);
         matrix.mapRect(rPreview);
 
         mSurfaceView.getLayoutParams().height = (int) rPreview.bottom;
