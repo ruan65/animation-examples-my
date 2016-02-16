@@ -37,4 +37,16 @@
         android:orderInCategory="50"
         android:title="Camera"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/tone_generator"
+        android:orderInCategory="40"
+        android:title="Tone generator"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/date_picker"
+        android:orderInCategory="30"
+        android:title="Tone generator"
+        app:showAsAction="never" />
 </menu>

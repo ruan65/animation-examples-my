@@ -11,23 +11,23 @@ import android.view.animation.BounceInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.RelativeLayout;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class TimerActivity extends AppCompatActivity implements View.OnTouchListener {
 
     public static final float sOvershoot = 1f;
     public static final int ANIM_DURATION = 650;
 
-    @InjectView(R.id.v0)
+    @Bind(R.id.v0)
     View v0;
-    @InjectView(R.id.v1)
+    @Bind(R.id.v1)
     View v1;
-    @InjectView(R.id.v2)
+    @Bind(R.id.v2)
     View v2;
-    @InjectView(R.id.v3)
+    @Bind(R.id.v3)
     View v3;
-    @InjectView(R.id.containerRL)
+    @Bind(R.id.containerRL)
     RelativeLayout mFrame;
 
     int v0h, v1h, v2h, v3h, v0l, v1l, v2l, v3l; // highest and lowest positions of all movable views
@@ -42,7 +42,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnTouchList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
 
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         v0.setOnTouchListener(this);
         v1.setOnTouchListener(this);

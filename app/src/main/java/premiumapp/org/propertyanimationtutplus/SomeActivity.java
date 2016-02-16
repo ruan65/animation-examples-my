@@ -7,19 +7,19 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 
 public class SomeActivity extends ActionBarActivity implements View.OnTouchListener {
 
-    @InjectView(R.id.imageView)
+    @Bind(R.id.imageView)
     ImageView wheel;
 
-    @InjectView(R.id.imageView2)
+    @Bind(R.id.imageView2)
     ImageView wheel2;
 
-    @InjectView(R.id.toggle_image)
+    @Bind(R.id.toggle_image)
     ImageView trView;
 
     float dX, dY;
@@ -31,7 +31,7 @@ public class SomeActivity extends ActionBarActivity implements View.OnTouchListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_some);
 
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         transitionDrawable = (TransitionDrawable) getResources().getDrawable(R.drawable.transition);
         wheel.setOnTouchListener(this);

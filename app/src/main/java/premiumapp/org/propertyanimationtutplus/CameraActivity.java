@@ -1,5 +1,6 @@
 package premiumapp.org.propertyanimationtutplus;
 
+import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.RectF;
@@ -7,13 +8,13 @@ import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -52,8 +53,11 @@ public class CameraActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        mCamera = Camera.open(CAMERA_ID);
-        definePreview();
+        mCamera = getCameraInstance(this);
+
+        if (mCamera != null) {
+            definePreview();
+        }
     }
 
     @Override
@@ -61,23 +65,10 @@ public class CameraActivity extends AppCompatActivity {
         super.onPause();
 
         if (mCamera != null) {
+
             mCamera.release();
             mCamera = null;
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_camera, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
     private void definePreview() {
@@ -91,25 +82,25 @@ public class CameraActivity extends AppCompatActivity {
         Size cameraSize = mCamera.getParameters().getPreviewSize();
 
         RectF rDisplay = new RectF();
-        RectF rPreview = new RectF();
+        RectF rCamera = new RectF();
 
         rDisplay.set(0, 0, displaySize.x, displaySize.y);
 
         if (landscapeMode) {
 
-            rPreview.set(0, 0, cameraSize.width, cameraSize.height);
+            rCamera.set(0, 0, cameraSize.width, cameraSize.height);
         } else {
-            rPreview.set(0, 0, cameraSize.height, cameraSize.width);
+            rCamera.set(0, 0, cameraSize.height, cameraSize.width);
         }
 
         Matrix matrix = new Matrix();
-
-        matrix.setRectToRect(rDisplay, rPreview, Matrix.ScaleToFit.START);
+        // I want full screen
+        matrix.setRectToRect(rDisplay, rCamera, Matrix.ScaleToFit.START);
         matrix.invert(matrix);
-        matrix.mapRect(rPreview);
+        matrix.mapRect(rCamera);
 
-        mSurfaceView.getLayoutParams().height = (int) rPreview.bottom;
-        mSurfaceView.getLayoutParams().width = (int) rPreview.right;
+        mSurfaceView.getLayoutParams().height = (int) rCamera.bottom;
+        mSurfaceView.getLayoutParams().width = (int) rCamera.right;
     }
 
     private void defineOrientation(int cameraId) {
@@ -150,6 +141,17 @@ public class CameraActivity extends AppCompatActivity {
         mCamera.setDisplayOrientation(calcDegree);
     }
 
+    public static Camera getCameraInstance(Context ctx){
+        Camera camera = null;
+        try {
+            camera = Camera.open();
+        }
+        catch (Exception e){
+            Toast.makeText(ctx, "Camera in use or doesn't exists", Toast.LENGTH_LONG).show();
+        }
+        return camera;
+    }
+
     private class HolderCallback implements SurfaceHolder.Callback {
 
         @Override
@@ -161,7 +163,7 @@ public class CameraActivity extends AppCompatActivity {
                 mCamera.startPreview();
 
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.d(getClass().getName(), "Error setting camera preview: " + e.getMessage());
             }
 
         }
@@ -169,16 +171,18 @@ public class CameraActivity extends AppCompatActivity {
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
-            mCamera.stopPreview();
-            defineOrientation(CAMERA_ID);
+            if (holder.getSurface() == null) return;
 
             try {
+                mCamera.stopPreview();
+
+                defineOrientation(CAMERA_ID);
 
                 mCamera.setPreviewDisplay(mHolder);
                 mCamera.startPreview();
 
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.d(getClass().getName(), "Error starting camera preview: " + e.getMessage());
             }
         }
 

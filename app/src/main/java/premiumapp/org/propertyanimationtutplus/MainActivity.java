@@ -5,19 +5,14 @@ import android.animation.AnimatorInflater;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AnimationSet;
 import android.widget.ImageView;
-import android.widget.ViewAnimator;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -81,22 +76,31 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.timer:
-                startActivity(new Intent(MainActivity.this, TimerActivity.class));
+                startActivity(new Intent(this, TimerActivity.class));
                 break;
             case R.id.drag_and_drop:
-                startActivity(new Intent(MainActivity.this, DragAndDropActivity.class));
+                startActivity(new Intent(this, DragAndDropActivity.class));
                 break;
             case R.id.experiment:
-                startActivity(new Intent(MainActivity.this, ExperimentActivity.class));
+                startActivity(new Intent(this, ExperimentActivity.class));
                 break;
             case R.id.some:
-                startActivity(new Intent(MainActivity.this, SomeActivity.class));
+                startActivity(new Intent(this, SomeActivity.class));
                 break;
             case R.id.compass:
-                startActivity(new Intent(MainActivity.this, CompassActivity.class));
+                startActivity(new Intent(this, CompassActivity.class));
+                break;
 
             case R.id.camera:
-                startActivity(new Intent(MainActivity.this, CameraActivity.class));
+                startActivity(new Intent(this, CameraActivity.class));
+                break;
+
+            case R.id.tone_generator:
+                startActivity(new Intent(this, ToneGeneratorActivity.class));
+                break;
+            case R.id.date_picker:
+                startActivity(new Intent(this, DatePickerActivity.class));
+                break;
         }
         return true;
     }

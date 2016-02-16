@@ -24,6 +24,7 @@
     <string name="title_activity_some">SomeActivity</string>
     <string name="title_activity_compass">CompassActivity</string>
     <string name="title_activity_camera">CameraActivity</string>
+    <string name="title_activity_tone_generator">ToneGeneratorActivity</string>
 
 
 </resources>
