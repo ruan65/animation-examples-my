@@ -46,7 +46,7 @@
 
     <item
         android:id="@+id/date_picker"
-        android:orderInCategory="30"
-        android:title="Tone generator"
+        android:orderInCategory="300"
+        android:title="Date Picker"
         app:showAsAction="never" />
 </menu>
